@@ -43,3 +43,16 @@ Make sure to use the correct identifiers, keys and URL's as specified in the web
 * Outgoing name ID format: **unspecified**
 
 The API relies on this so that each todo list is only available to the user the list belongs too.
+
+## Some Screenshots
+
+* Landing page
+![Alt text](/img/1landingpage.png?raw=true)
+* After signing in
+
+* Manage to do list
+
+* Show my claims
+
+Here you can see that for the Access Token I got a http://foo/bar "HardCodedValue" claim that was configured in the Claims Issuance Rules for the API. The name claim in the Access Token contains the sAMAccountName, but that was just a  test. And the nameidentifier claims contains the UPN. The API relies on this claim to make sure todo lists are keyed off uniquely to each user.
+
