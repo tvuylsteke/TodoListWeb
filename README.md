@@ -10,8 +10,8 @@ There are two projects in this solution: TodoListWebApp and TodoListService
 
 ## Remarks:
 
-* **REMARK #1: the todo list content is forgotten when the API is restarted. Thís is a simple educational example.**
-* **REMARK #1: the UserProfileController has not been touched/ported and has no use for the current state of the TodoListWeb application**
+* **REMARK #1**: the todo list content is forgotten when the API is restarted. Thís is a simple educational example.
+* **REMARK #1**: the UserProfileController has not been touched/ported and has no use for the current state of the TodoListWeb application
 * **REMARK #2: I'm not a developer. You can read, copy and use my code, but I'm not responsible for whatever happens. This sample is mainly focussed on understanding the nuances of OAuth/OpenIDConnect specifically with AD FS 2016. That's where I've put most of the effort (time) in. That also means there are probably several examples of how not to do MVC, or CSS or ... I'm always keen to learn and I appreciate feedback.**
 
 ## Additional Information
