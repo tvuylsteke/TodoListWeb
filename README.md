@@ -32,3 +32,14 @@ TodoListService web.config:
 
 * **ida:ADFSDiscoveryDoc**: the AD FS Federation Metadata URL. Even do we're doing OAuth we still need to use the FederationMetadata.xml here. A colleague told me that this is probably due to backwards compatibility of ActiveDirectoryFederationServicesBearerAuthenticationOptions. Example: https://adfs.contoso.com/FederationMetadata/2007-06/FederationMetadata.xml
 * **ida:Audience**: the identifier of the API (resource). This should match up with what you configure on the Application Group. Example: https://todolistapi.contoso.com
+
+AD FS Application Group Configuration:
+
+Make sure to use the correct identifiers, keys and URL's as specified in the web.configs. You'll also need to configure the following Claim Issuance Rule for the API:
+
+**Transform an Incoming Claim:**
+* Incoming claim type: **UPN**
+* Outgoing claim type: **Name ID**
+ *Outgoing name ID format: **unspecified**
+
+ The API relies on this so that each todo list is only available to the user the list belongs too.
