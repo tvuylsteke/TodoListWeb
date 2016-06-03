@@ -42,4 +42,4 @@ Make sure to use the correct identifiers, keys and URL's as specified in the web
 * Outgoing claim type: **Name ID**
 * Outgoing name ID format: **unspecified**
 
- The API relies on this so that each todo list is only available to the user the list belongs too.
+The API relies on this so that each todo list is only available to the user the list belongs too.
