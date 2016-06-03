@@ -2,6 +2,8 @@
 
 This is a sample that I built so that I could get more familiar with OpenID Connect, OAuth and how they are implemented with AD FS on Server 2016 TP5.
 
+This sample is based on https://github.com/Azure-Samples/active-directory-dotnet-webapp-webapi-openidconnect
+
 ## Todo List Web Contents
 
 There are two projects in this solution: TodoListWebApp and TodoListService
