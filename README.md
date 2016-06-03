@@ -40,6 +40,6 @@ Make sure to use the correct identifiers, keys and URL's as specified in the web
 **Transform an Incoming Claim:**
 * Incoming claim type: **UPN**
 * Outgoing claim type: **Name ID**
- *Outgoing name ID format: **unspecified**
+* Outgoing name ID format: **unspecified**
 
  The API relies on this so that each todo list is only available to the user the list belongs too.
