@@ -104,11 +104,13 @@ namespace TodoListWebApp.Controllers
                 }
                 else
                 {
+                    //empty list
                     ViewBag.ATclaims = new List<ClaimInfo>();
                 }
             }
             catch (AdalException ee)
             {
+                //empty list
                 ViewBag.ATclaims = new List<ClaimInfo>();
             }
 
