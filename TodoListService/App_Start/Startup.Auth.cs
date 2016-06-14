@@ -30,6 +30,7 @@ namespace TodoListService
             app.UseActiveDirectoryFederationServicesBearerAuthentication(
                 new ActiveDirectoryFederationServicesBearerAuthenticationOptions
                 {
+                    // [jelled] Why is Audience not being checked via this mechanism?
                     //Audience = ConfigurationManager.AppSettings["ida:Audience"],                  
                     MetadataEndpoint = adfsDiscoveryDoc,
                     TokenValidationParameters = new TokenValidationParameters() { ValidAudience = validAudience },

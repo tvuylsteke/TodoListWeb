@@ -25,7 +25,7 @@ namespace TodoListService.Controllers
                 ci.ClaimType = claim.Type;
                 ci.Value = claim.Value;
                 ci.ValueType = claim.ValueType.Substring(claim.ValueType.IndexOf('#') + 1);
-                ci.SubjectName = ((claim.Subject) != null && (String.IsNullOrEmpty(claim.Subject.Name)) == false) ? claim.Subject.Name : "Null";
+                ci.SubjectName = (claim.Subject == null || string.IsNullOrEmpty(claim.Subject.Name)) ? "Null" : claim.Subject.Name;
                 ci.IssuerName = !String.IsNullOrEmpty(claim.Issuer) ? claim.Issuer : "Null";
 
                 results.Add(ci);

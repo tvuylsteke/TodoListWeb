@@ -21,8 +21,8 @@ namespace TodoListWebApp.Controllers
     public class HomeController : Controller
     {
         //API
-        private string todoListResourceId = ConfigurationManager.AppSettings["todo:TodoListResourceId"];
-        private string todoListBaseAddress = ConfigurationManager.AppSettings["todo:TodoListBaseAddress"];
+        private static string todoListResourceId = ConfigurationManager.AppSettings["todo:TodoListResourceId"];
+        private static string todoListBaseAddress = ConfigurationManager.AppSettings["todo:TodoListBaseAddress"];
 
         //Application
         private static string clientId = ConfigurationManager.AppSettings["ida:ClientId"];
@@ -36,7 +36,7 @@ namespace TodoListWebApp.Controllers
         public async Task<ActionResult> Claims()
         {
             ClaimsPrincipal cp = ClaimsPrincipal.Current;
-            List<ClaimInfo> results = new List<ClaimInfo>();
+            List<ClaimInfo> idClaims = new List<ClaimInfo>();
 
             foreach (var claim in cp.Claims)
             {
@@ -44,73 +44,76 @@ namespace TodoListWebApp.Controllers
                 ci.ClaimType = claim.Type;
                 ci.Value = claim.Value;
                 ci.ValueType = claim.ValueType.Substring(claim.ValueType.IndexOf('#') + 1);
-                ci.SubjectName = ((claim.Subject) != null && (String.IsNullOrEmpty(claim.Subject.Name)) == false) ? claim.Subject.Name : "Null";
+                ci.SubjectName = (claim.Subject == null || string.IsNullOrEmpty(claim.Subject.Name)) ? "Null" : claim.Subject.Name;
                 ci.IssuerName = !String.IsNullOrEmpty(claim.Issuer) ? claim.Issuer : "Null";
 
-                results.Add(ci);
+                idClaims.Add(ci);
             }
 
-            ViewBag.IDclaims = results;     
+            ViewBag.IDclaims = idClaims;
 
+            List<ClaimInfo> atClaims = new List<ClaimInfo>();
 
-            AuthenticationResult result = null;
             List<TodoItem> itemList = new List<TodoItem>();
 
-            try
+            if (ClaimsPrincipal.Current.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn") != null)
             {
-                if (ClaimsPrincipal.Current.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn") == null) {
-                       ViewBag.ATclaims = new List<ClaimInfo>();
-                       return View();
-                }
-
-                string userObjectID = ClaimsPrincipal.Current.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn").Value;
-                AuthenticationContext authContext = new AuthenticationContext(Startup.Authority, false, new NaiveSessionCache(userObjectID));
-                ClientCredential credential = new ClientCredential(clientId, appKey);                
-                result = await authContext.AcquireTokenSilentAsync(todoListResourceId, credential, new UserIdentifier(userObjectID, UserIdentifierType.RequiredDisplayableId));
-
-                //
-                // Retrieve the user's To Do List.
-                //
-                HttpClient client = new HttpClient();
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, todoListBaseAddress + "/api/claims");
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-                HttpResponseMessage response = await client.SendAsync(request);
-
-                //
-                // Return the To Do List in the view.
-                //
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    List<Dictionary<String, String>> responseElements = new List<Dictionary<String, String>>();
-                    JsonSerializerSettings settings = new JsonSerializerSettings();
-                    String responseString = await response.Content.ReadAsStringAsync();
-                    responseElements = JsonConvert.DeserializeObject<List<Dictionary<String, String>>>(responseString, settings);
+                    string userObjectID = ClaimsPrincipal.Current.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn").Value;
+                    AuthenticationContext authContext = new AuthenticationContext(Startup.Authority, false, new NaiveSessionCache(userObjectID));
+                    ClientCredential credential = new ClientCredential(clientId, appKey);
+                    AuthenticationResult result = await authContext.AcquireTokenSilentAsync(todoListResourceId, credential, new UserIdentifier(userObjectID, UserIdentifierType.RequiredDisplayableId));
 
-                    List<ClaimInfo> ATresults = new List<ClaimInfo>();
+                    //
+                    // Retrieve the user's To Do List.
+                    //
+                    HttpClient client = new HttpClient();
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, todoListBaseAddress + "/api/claims");
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
 
-                    foreach (var claim in responseElements)
+                    //
+                    // Return the To Do List in the view.
+                    //
+                    if (response.IsSuccessStatusCode)
                     {
-                        ClaimInfo ci = new ClaimInfo();
-                        ci.ClaimType = claim["ClaimType"];
-                        ci.Value = claim["Value"];
-                        ci.ValueType = claim["ValueType"].Substring(claim["ValueType"].IndexOf('#') + 1);
-                        ci.SubjectName = ((claim["SubjectName"]) != null && (String.IsNullOrEmpty(claim["SubjectName"])) == false) ? claim["SubjectName"] : "Null";
-                        ci.IssuerName = !String.IsNullOrEmpty(claim["IssuerName"]) ? claim["IssuerName"] : "Null";
+                        List<Dictionary<String, String>> responseElements = new List<Dictionary<String, String>>();
+                        JsonSerializerSettings settings = new JsonSerializerSettings();
+                        String responseString = await response.Content.ReadAsStringAsync();
+                        // [jelled] Untested but something along these lines should be better:
+                        atClaims = JsonConvert.DeserializeObject<List<ClaimInfo>>(responseString, settings);
+                        //responseElements = JsonConvert.DeserializeObject<List<Dictionary<String, String>>>(responseString, settings);
 
-                        ATresults.Add(ci);
+                        //foreach (var claim in responseElements)
+                        //{
+                        //    ClaimInfo ci = new ClaimInfo();
+                        //    ci.ClaimType = claim["ClaimType"];
+                        //    ci.Value = claim["Value"];
+                        //    ci.ValueType = claim["ValueType"].Substring(claim["ValueType"].IndexOf('#') + 1);
+                        //    ci.SubjectName = ((claim["SubjectName"]) != null && (String.IsNullOrEmpty(claim["SubjectName"])) == false) ? claim["SubjectName"] : "Null";
+                        //    ci.IssuerName = !String.IsNullOrEmpty(claim["IssuerName"]) ? claim["IssuerName"] : "Null";
+
+                        //    atClaims.Add(ci);
+                        //}
+
                     }
-
-                    ViewBag.ATclaims = ATresults;
+                    else
+                    {
+                        // [jelled] Show the error somehow.
+                    }
                 }
-                else
+                catch (AdalSilentTokenAcquisitionException)
                 {
-                    ViewBag.ATclaims = new List<ClaimInfo>();
+                    // [jelled] In case the exception is because acquiring the token silently failed, then the cached token is probably invalid
+                    // (and cannot be refreshed using the refresh token). Force the user to sign in again.
+                }
+                catch (AdalException)
+                {
+                    // [jelled] Completely ignoring exceptions is always a bad idea. It could be interesting to show the exception on the page somehow.
                 }
             }
-            catch (AdalException ee)
-            {
-                ViewBag.ATclaims = new List<ClaimInfo>();
-            }
+            ViewBag.ATclaims = atClaims;
 
             //
             // If the call failed for any other reason, show the user an error.
