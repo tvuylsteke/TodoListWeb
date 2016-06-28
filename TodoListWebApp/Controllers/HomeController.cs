@@ -102,16 +102,22 @@ namespace TodoListWebApp.Controllers
 
                     ViewBag.ATclaims = ATresults;
                 }
-                else
-                {
+                //else
+                //{
                     //empty list
-                    ViewBag.ATclaims = new List<ClaimInfo>();
-                }
+                    //should be covered by checking if the viewbag != null
+                    //ViewBag.ATclaims = new List<ClaimInfo>();
+                //}
             }
             catch (AdalException ee)
             {
+                //typically one would want force signin to happen here
+                //however here we want to explicitely show you don't have any claims
+                //we don't want to remidiate that.
+
                 //empty list
-                ViewBag.ATclaims = new List<ClaimInfo>();
+                //should be covered by checking if the viewbag != null
+                //ViewBag.ATclaims = new List<ClaimInfo>();
             }
 
             //
