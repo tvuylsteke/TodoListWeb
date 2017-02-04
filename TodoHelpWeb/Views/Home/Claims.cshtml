@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "ID Token Content";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>Limited Properties for ID Token</h3>
+
+<div class="container">
+    <div class="row" style="font-weight:bold;border-bottom: 1px solid #ddd">
+        <div class="col-md-6">Claim Type</div>
+        <div class="col-md-6">Claim Value</div>
+
+    </div>
+    @if (ViewBag.IDclaims != null)
+    {
+        foreach (var claim in ViewBag.IDclaims)
+        {
+            <div class="row" style="word-wrap:break-word;border-bottom: 1px solid #ddd">
+                <div class="col-sm-6">@claim.ClaimType</div>
+                <div class="col-sm-6">@claim.Value</div>
+            </div>
+        }
+    }
+</div>
+
+<h3>All Properties for ID Token</h3>
+<div class="container">
+    <div class="row" style="font-weight:bold;border-bottom: 1px solid #ddd">
+        <div class="col-md-4">Claim Type</div>
+        <div class="col-md-3">Claim Value</div>
+        <div class="col-md-1">Value Type</div>
+        <div class="col-md-2">Subject Name</div>
+        <div class="col-md-2">Issuer Name</div>
+    </div>
+
+    @if (ViewBag.IDclaims != null)
+    {
+        foreach (var claim in ViewBag.IDclaims)
+        {
+            <div class="row" style="font-size:70%;word-wrap:break-word;border-bottom: 1px solid #ddd">
+                <div class="col-sm-4">@claim.ClaimType</div>
+                <div class="col-sm-3">@claim.Value</div>
+                <div class="col-sm-1">@claim.ValueType</div>
+                <div class="col-sm-2">@claim.SubjectName</div>
+                <div class="col-sm-2">@claim.IssuerName</div>
+            </div>
+        }
+    }
+</div>
