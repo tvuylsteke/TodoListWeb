@@ -24,9 +24,11 @@ using System.Web.Http;
 using System.Collections.Concurrent;
 using TodoListService.Models;
 using System.Security.Claims;
+using System.Web.Http.Cors;
 
 namespace TodoListService.Controllers
 {
+    //[EnableCors(origins: "http://mywebclient.azurewebsites.net", headers: "*", methods: "*")]
     [Authorize]
     public class TodoListController : ApiController
     {
